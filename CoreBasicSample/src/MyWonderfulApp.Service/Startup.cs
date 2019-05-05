@@ -38,7 +38,7 @@ namespace MyWonderfulApp.Service
                 {
                     o.DefaultApiVersion = new ApiVersion(1, 0); // specify the default api version
                     o.AssumeDefaultVersionWhenUnspecified = true; // assume that the caller wants the default version if they don'
-                    o.ApiVersionReader = new QueryStringApiVersionReader("api-version");
+                    //o.ApiVersionReader = new QueryStringApiVersionReader("api-version");
                 });
 
             services.AddSwaggerDocument();

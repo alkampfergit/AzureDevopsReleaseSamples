@@ -264,11 +264,9 @@ var SupportClient = /** @class */ (function () {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "http://localhost:5010";
     }
-    SupportClient.prototype.ping = function (api_version) {
+    SupportClient.prototype.ping = function () {
         var _this = this;
-        var url_ = this.baseUrl + "/api/Support/Ping?";
-        if (api_version !== undefined)
-            url_ += "api-version=" + encodeURIComponent("" + api_version) + "&";
+        var url_ = this.baseUrl + "/api/1/Support/Ping";
         url_ = url_.replace(/[?&]$/, "");
         var options_ = {
             observe: "response",
@@ -293,6 +291,59 @@ var SupportClient = /** @class */ (function () {
         }));
     };
     SupportClient.prototype.processPing = function (response) {
+        var _this = this;
+        var status = response.status;
+        var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :
+            response.error instanceof Blob ? response.error : undefined;
+        var _headers = {};
+        if (response.headers) {
+            for (var _i = 0, _a = response.headers.keys(); _i < _a.length; _i++) {
+                var key = _a[_i];
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        ;
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
+                var result200 = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, _this.jsonParseReviver);
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(result200);
+            }));
+        }
+        else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(null);
+    };
+    SupportClient.prototype.ping2 = function () {
+        var _this = this;
+        var url_ = this.baseUrl + "/api/2/Support/Ping";
+        url_ = url_.replace(/[?&]$/, "");
+        var options_ = {
+            observe: "response",
+            responseType: "blob",
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpHeaders"]({
+                "Accept": "application/json"
+            })
+        };
+        return this.http.request("get", url_, options_).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (response_) {
+            return _this.processPing2(response_);
+        })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["catchError"])(function (response_) {
+            if (response_ instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponseBase"]) {
+                try {
+                    return _this.processPing2(response_);
+                }
+                catch (e) {
+                    return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(e);
+                }
+            }
+            else
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(response_);
+        }));
+    };
+    SupportClient.prototype.processPing2 = function (response) {
         var _this = this;
         var status = response.status;
         var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :

@@ -9,7 +9,7 @@ namespace MyWonderfulApp.Service.Controllers.V1
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/{version:apiVersion}/[controller]/[action]")]
     public class SupportController : Controller
     {
         [SwaggerResponse(typeof(String))]
