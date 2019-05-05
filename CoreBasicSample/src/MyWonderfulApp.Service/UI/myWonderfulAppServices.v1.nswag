@@ -60,7 +60,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "src/app/services/myWonderfulAppServices.web.ts"
+      "output": "src/app/services/myWonderfulAppServicesv1.web.ts"
     }
   }
 }

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { API_BASE_URL } from './services/myWonderfulAppServices.web';
+import { API_BASE_URL } from './services/myWonderfulAppServicesv1.web';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ROUTES } from './app.routes';
 import { FormsModule } from '@angular/forms';

@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var _services_myWonderfulAppServices_web__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./services/myWonderfulAppServices.web */ "./src/app/services/myWonderfulAppServices.web.ts");
+/* harmony import */ var _services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./services/myWonderfulAppServicesv1.web */ "./src/app/services/myWonderfulAppServicesv1.web.ts");
 /* harmony import */ var _components_page_not_found_page_not_found_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/page-not-found/page-not-found.component */ "./src/app/components/page-not-found/page-not-found.component.ts");
 /* harmony import */ var _app_routes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./app.routes */ "./src/app/app.routes.ts");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
@@ -138,7 +138,7 @@ var AppModule = /** @class */ (function () {
             ],
             providers: [
                 { provide: _angular_common__WEBPACK_IMPORTED_MODULE_9__["LocationStrategy"], useClass: _angular_common__WEBPACK_IMPORTED_MODULE_9__["HashLocationStrategy"] },
-                { provide: _services_myWonderfulAppServices_web__WEBPACK_IMPORTED_MODULE_5__["API_BASE_URL"], useValue: window.location.origin },
+                { provide: _services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_5__["API_BASE_URL"], useValue: window.location.origin },
             ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
         })
@@ -227,10 +227,10 @@ var PageNotFoundComponent = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/app/services/myWonderfulAppServices.web.ts":
-/*!********************************************************!*\
-  !*** ./src/app/services/myWonderfulAppServices.web.ts ***!
-  \********************************************************/
+/***/ "./src/app/services/myWonderfulAppServicesv1.web.ts":
+/*!**********************************************************!*\
+  !*** ./src/app/services/myWonderfulAppServicesv1.web.ts ***!
+  \**********************************************************/
 /*! exports provided: API_BASE_URL, SupportClient, SwaggerException */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -266,7 +266,7 @@ var SupportClient = /** @class */ (function () {
     }
     SupportClient.prototype.ping = function () {
         var _this = this;
-        var url_ = this.baseUrl + "/api/1/Support/Ping";
+        var url_ = this.baseUrl + "/api/v1/Support/Ping";
         url_ = url_.replace(/[?&]$/, "");
         var options_ = {
             observe: "response",
@@ -291,59 +291,6 @@ var SupportClient = /** @class */ (function () {
         }));
     };
     SupportClient.prototype.processPing = function (response) {
-        var _this = this;
-        var status = response.status;
-        var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :
-            response.error instanceof Blob ? response.error : undefined;
-        var _headers = {};
-        if (response.headers) {
-            for (var _i = 0, _a = response.headers.keys(); _i < _a.length; _i++) {
-                var key = _a[_i];
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        ;
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
-                var result200 = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, _this.jsonParseReviver);
-                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(result200);
-            }));
-        }
-        else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(null);
-    };
-    SupportClient.prototype.ping2 = function () {
-        var _this = this;
-        var url_ = this.baseUrl + "/api/2/Support/Ping";
-        url_ = url_.replace(/[?&]$/, "");
-        var options_ = {
-            observe: "response",
-            responseType: "blob",
-            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpHeaders"]({
-                "Accept": "application/json"
-            })
-        };
-        return this.http.request("get", url_, options_).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (response_) {
-            return _this.processPing2(response_);
-        })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["catchError"])(function (response_) {
-            if (response_ instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponseBase"]) {
-                try {
-                    return _this.processPing2(response_);
-                }
-                catch (e) {
-                    return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(e);
-                }
-            }
-            else
-                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(response_);
-        }));
-    };
-    SupportClient.prototype.processPing2 = function (response) {
         var _this = this;
         var status = response.status;
         var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :

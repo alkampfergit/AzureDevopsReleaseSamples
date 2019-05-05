@@ -9,11 +9,13 @@ namespace MyWonderfulApp.Service.Controllers.V1
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/{version:apiVersion}/[controller]/[action]")]
+    [Route("api/v{version:apiVersion}/[controller]/[action]")]
+    [SwaggerTag("SupportController", Description = "Version 1")]
     public class SupportController : Controller
     {
         [SwaggerResponse(typeof(String))]
         [HttpGet]
+        [MapToApiVersion("1.0")]
         public IActionResult Ping()
         {
             return Ok("Pong");
