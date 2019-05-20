@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Install module https://dotnet.microsoft.com/download/dotnet-core/2.2 Installare il Runtime & hosting bundle del runtime -->
+<!-- https://dotnettutorials.net/lesson/asp-net-core-outofprocess-hosting/ -->
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore
+            processPath="dotnet" 
+            arguments="" 
+            stdoutLogEnabled="true"
+            stdoutLogFile=".\logs\stdout"
+            hostingModel="OutOfProcess" />
+    </system.webServer>
+  </location>
+</configuration> 
