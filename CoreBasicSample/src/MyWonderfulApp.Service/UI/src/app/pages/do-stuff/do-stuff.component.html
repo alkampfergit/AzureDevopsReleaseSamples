@@ -1,0 +1,11 @@
+<div>
+  <h1>Try doing stuff.</h1>
+  <div>
+    <label for="number">Type a number</label>
+    <input type="number" name="number" [(ngModel)]="number" />
+    <button (click)="doStuff()">Calculate result</button>
+  </div>
+  <h1>Result</h1>
+  <span>Result: {{result}}</span><br/>
+  <span>Greet: {{greet}}</span>
+</div>

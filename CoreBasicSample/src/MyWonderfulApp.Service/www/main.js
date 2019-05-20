@@ -110,6 +110,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _pages_do_stuff_do_stuff_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pages/do-stuff/do-stuff.component */ "./src/app/pages/do-stuff/do-stuff.component.ts");
+
 
 
 
@@ -129,6 +131,7 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
                 _components_page_not_found_page_not_found_component__WEBPACK_IMPORTED_MODULE_6__["PageNotFoundComponent"],
+                _pages_do_stuff_do_stuff_component__WEBPACK_IMPORTED_MODULE_11__["DoStuffComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -139,6 +142,7 @@ var AppModule = /** @class */ (function () {
             providers: [
                 { provide: _angular_common__WEBPACK_IMPORTED_MODULE_9__["LocationStrategy"], useClass: _angular_common__WEBPACK_IMPORTED_MODULE_9__["HashLocationStrategy"] },
                 { provide: _services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_5__["API_BASE_URL"], useValue: window.location.origin },
+                _services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_5__["SupportClient"]
             ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
         })
@@ -161,11 +165,14 @@ var AppModule = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ROUTES", function() { return ROUTES; });
 /* harmony import */ var _components_page_not_found_page_not_found_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/page-not-found/page-not-found.component */ "./src/app/components/page-not-found/page-not-found.component.ts");
+/* harmony import */ var _pages_do_stuff_do_stuff_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pages/do-stuff/do-stuff.component */ "./src/app/pages/do-stuff/do-stuff.component.ts");
+
 
 var ROUTES = [
+    { path: "doStuff", component: _pages_do_stuff_do_stuff_component__WEBPACK_IMPORTED_MODULE_1__["DoStuffComponent"] },
     { path: "page-not-found", component: _components_page_not_found_page_not_found_component__WEBPACK_IMPORTED_MODULE_0__["PageNotFoundComponent"] },
     { path: "tests", loadChildren: "./tests/tests.module#TestsModule" },
-    { path: "**", redirectTo: "page-not-found" }
+    { path: "**", redirectTo: "doStuff" }
 ];
 
 
@@ -227,6 +234,75 @@ var PageNotFoundComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/pages/do-stuff/do-stuff.component.css":
+/*!*******************************************************!*\
+  !*** ./src/app/pages/do-stuff/do-stuff.component.css ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL3BhZ2VzL2RvLXN0dWZmL2RvLXN0dWZmLmNvbXBvbmVudC5jc3MifQ== */"
+
+/***/ }),
+
+/***/ "./src/app/pages/do-stuff/do-stuff.component.html":
+/*!********************************************************!*\
+  !*** ./src/app/pages/do-stuff/do-stuff.component.html ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\n  <h1>Try doing stuff.</h1>\n  <div>\n    <label for=\"number\">Type a number</label>\n    <input type=\"number\" name=\"number\" [(ngModel)]=\"number\" />\n    <button (click)=\"doStuff()\">Calculate result</button>\n  </div>\n  <h1>Result</h1>\n  <span>Result: {{result}}</span><br/>\n  <span>Greet: {{greet}}</span>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/pages/do-stuff/do-stuff.component.ts":
+/*!******************************************************!*\
+  !*** ./src/app/pages/do-stuff/do-stuff.component.ts ***!
+  \******************************************************/
+/*! exports provided: DoStuffComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DoStuffComponent", function() { return DoStuffComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/myWonderfulAppServicesv1.web */ "./src/app/services/myWonderfulAppServicesv1.web.ts");
+
+
+
+var DoStuffComponent = /** @class */ (function () {
+    function DoStuffComponent(supportClient) {
+        this.supportClient = supportClient;
+        this.result = 0;
+        this.greet = "";
+    }
+    DoStuffComponent.prototype.ngOnInit = function () {
+    };
+    DoStuffComponent.prototype.doStuff = function () {
+        var _this = this;
+        this.supportClient.doStuff(this.number)
+            .subscribe(function (result) {
+            _this.greet = result.greet;
+            _this.result = result.result;
+        });
+    };
+    DoStuffComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'app-do-stuff',
+            template: __webpack_require__(/*! ./do-stuff.component.html */ "./src/app/pages/do-stuff/do-stuff.component.html"),
+            styles: [__webpack_require__(/*! ./do-stuff.component.css */ "./src/app/pages/do-stuff/do-stuff.component.css")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_2__["SupportClient"]])
+    ], DoStuffComponent);
+    return DoStuffComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/services/myWonderfulAppServicesv1.web.ts":
 /*!**********************************************************!*\
   !*** ./src/app/services/myWonderfulAppServicesv1.web.ts ***!
@@ -262,7 +338,7 @@ var SupportClient = /** @class */ (function () {
     function SupportClient(http, baseUrl) {
         this.jsonParseReviver = undefined;
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "http://localhost:5010";
+        this.baseUrl = baseUrl ? baseUrl : "http://localhost:12345";
     }
     SupportClient.prototype.ping = function () {
         var _this = this;
@@ -291,6 +367,63 @@ var SupportClient = /** @class */ (function () {
         }));
     };
     SupportClient.prototype.processPing = function (response) {
+        var _this = this;
+        var status = response.status;
+        var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :
+            response.error instanceof Blob ? response.error : undefined;
+        var _headers = {};
+        if (response.headers) {
+            for (var _i = 0, _a = response.headers.keys(); _i < _a.length; _i++) {
+                var key = _a[_i];
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        ;
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
+                var result200 = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, _this.jsonParseReviver);
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(result200);
+            }));
+        }
+        else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (_responseText) {
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["of"])(null);
+    };
+    SupportClient.prototype.doStuff = function (number) {
+        var _this = this;
+        var url_ = this.baseUrl + "/api/v1/Support/DoStuff?";
+        if (number === null)
+            throw new Error("The parameter 'number' cannot be null.");
+        else if (number !== undefined)
+            url_ += "number=" + encodeURIComponent("" + number) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+        var options_ = {
+            observe: "response",
+            responseType: "blob",
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpHeaders"]({
+                "Accept": "application/json"
+            })
+        };
+        return this.http.request("get", url_, options_).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["mergeMap"])(function (response_) {
+            return _this.processDoStuff(response_);
+        })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["catchError"])(function (response_) {
+            if (response_ instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponseBase"]) {
+                try {
+                    return _this.processDoStuff(response_);
+                }
+                catch (e) {
+                    return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(e);
+                }
+            }
+            else
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["throwError"])(response_);
+        }));
+    };
+    SupportClient.prototype.processDoStuff = function (response) {
         var _this = this;
         var status = response.status;
         var responseBlob = response instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpResponse"] ? response.body :
