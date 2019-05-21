@@ -9,7 +9,7 @@
       </handlers>
       <aspNetCore
             processPath="dotnet" 
-            arguments="" 
+            arguments="__applicationpath__" 
             stdoutLogEnabled="true"
             stdoutLogFile=".\logs\stdout"
             hostingModel="OutOfProcess" />
