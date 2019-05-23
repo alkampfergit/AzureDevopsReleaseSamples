@@ -19,6 +19,7 @@ namespace MyWonderfulApp.Core
             configurationBuilder
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("config.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("..\\mywonderfulapp.json", optional: true)
                 .AddEnvironmentVariables("MyWonderfulAppConfiguration:");
 
             IConfiguration configuration = configurationBuilder.Build();
@@ -28,21 +29,5 @@ namespace MyWonderfulApp.Core
 
         public String SampleConfigurationValue { get; set; }
 
-        private static string GetConfigFile()
-        {
-            var currentDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('/', '\\');
-            Console.WriteLine($"App directory is {currentDir}");
-            var parentPath = Directory.GetParent(currentDir).FullName;
-            Console.WriteLine($"Parent app directory is {parentPath}");
-            var parentConfigfile = Path.Combine(parentPath, "mywonderfulapp.json");
-            Console.WriteLine($"searching for  {parentConfigfile}");
-            if (File.Exists(parentConfigfile))
-            {
-                Console.WriteLine($"Config file found:  {parentConfigfile}");
-                return parentConfigfile;
-            }
-            Console.WriteLine($"Config file not found, resort to standard config.json");
-            return Path.Combine(currentDir, "config.json");
-        }
     }
 }
