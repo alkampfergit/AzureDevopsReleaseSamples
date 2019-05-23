@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSwag.AspNetCore;
-using NSwag.SwaggerGeneration.AspNetCore;
 using Serilog;
-using System;
-using System.Linq;
 
 namespace MyWonderfulApp.Service
 {

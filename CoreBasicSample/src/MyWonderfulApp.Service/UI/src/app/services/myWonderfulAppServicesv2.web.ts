@@ -127,6 +127,7 @@ export class SupportClient {
 export interface DoStuffResult {
     result: number;
     greet?: string | undefined;
+    sampleConfigurationValue?: string | undefined;
 }
 
 export class SwaggerException extends Error {

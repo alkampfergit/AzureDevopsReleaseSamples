@@ -252,7 +252,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <h1>Try doing stuff.</h1>\n  <div>\n    <label for=\"number\">Type a number</label>\n    <input type=\"number\" name=\"number\" [(ngModel)]=\"number\" />\n    <button (click)=\"doStuff()\">Calculate result</button>\n  </div>\n  <h1>Result</h1>\n  <span>Result: {{result}}</span><br/>\n  <span>Greet: {{greet}}</span>\n</div>\n"
+module.exports = "<div>\n  <h1>Try doing stuff.</h1>\n  <div>\n    <label for=\"number\">Type a number</label>\n    <input type=\"number\" name=\"number\" [(ngModel)]=\"number\" />\n    <button (click)=\"doStuff()\">Calculate result</button>\n  </div>\n  <h1>Result</h1>\n  <span>Result: {{result}}</span><br/>\n  <span>Greet: {{greet}}</span><br />\n  <span>Configuration: {{sampleConfigurationValue}}</span>\n</div>\n"
 
 /***/ }),
 
@@ -286,6 +286,7 @@ var DoStuffComponent = /** @class */ (function () {
             .subscribe(function (result) {
             _this.greet = result.greet;
             _this.result = result.result;
+            _this.sampleConfigurationValue = result.sampleConfigurationValue;
         });
     };
     DoStuffComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([

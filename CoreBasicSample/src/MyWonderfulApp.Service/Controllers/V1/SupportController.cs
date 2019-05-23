@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyWonderfulApp.Core;
 using MyWonderfulApp.Service.Models.V1;
 using NSwag.Annotations;
 using System;
@@ -29,7 +30,7 @@ namespace MyWonderfulApp.Service.Controllers.V1
             {
                 userName = HttpContext.User.Identity.Name;
             }
-            return Ok(new DoStuffResult(number * 42, $"Hello: {userName}"));
+            return Ok(new DoStuffResult(number * 42, $"Hello: {userName}", MyWonderfulAppConfiguration.Instance.SampleConfigurationValue));
         }
     }
 }

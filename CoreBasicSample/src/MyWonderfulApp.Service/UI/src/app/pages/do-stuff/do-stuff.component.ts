@@ -11,6 +11,7 @@ export class DoStuffComponent implements OnInit {
   public number: number;
   public result: number;
   public greet: string;
+  public sampleConfigurationValue: string;
 
   constructor(
     private supportClient: SupportClient
@@ -27,6 +28,7 @@ export class DoStuffComponent implements OnInit {
       .subscribe(result => {
         this.greet = result.greet;
         this.result = result.result;
+        this.sampleConfigurationValue = result.sampleConfigurationValue;
       });
   }
 
