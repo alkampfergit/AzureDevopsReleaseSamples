@@ -16,10 +16,11 @@ namespace MyWonderfulApp.Core
         private static void InitConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            var previousdir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory.TrimEnd('/', '\\')).FullName.TrimEnd('/', '\\');
             configurationBuilder
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("config.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("..\\mywonderfulapp.json", optional: true)
+                .AddJsonFile(previousdir + "\\mywonderfulapp.json", optional: true)
                 .AddEnvironmentVariables("MyWonderfulAppConfiguration:");
 
             IConfiguration configuration = configurationBuilder.Build();
