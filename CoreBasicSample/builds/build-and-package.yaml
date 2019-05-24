@@ -12,8 +12,8 @@ variables:
 jobs:
 - job: "BuildCoreApp"
   pool:
-    name: Default
-
+    name: Hosted Windows 2019 with VS2019
+  
   steps:
 
   - task: DotNetCoreInstaller@0
@@ -83,7 +83,7 @@ jobs:
   variables:
     uiFolder: CoreBasicSample/src/MyWonderfulApp.Service/UI
   pool:
-    name: Default
+    name: Hosted Ubuntu 1604
 
   steps:
   - task: DeleteFiles@1
