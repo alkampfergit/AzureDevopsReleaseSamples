@@ -26,7 +26,7 @@ export class SupportClient {
     }
 
     ping(): Observable<string | null> {
-        let url_ = this.baseUrl + "/api/v1/Support/Ping";
+        let url_ = this.baseUrl + "/api/v2/Support/Ping";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -71,64 +71,8 @@ export class SupportClient {
         }
         return _observableOf<string | null>(<any>null);
     }
-
-    doStuff(number: number | undefined): Observable<DoStuffResult | null> {
-        let url_ = this.baseUrl + "/api/v1/Support/DoStuff?";
-        if (number === null)
-            throw new Error("The parameter 'number' cannot be null.");
-        else if (number !== undefined)
-            url_ += "number=" + encodeURIComponent("" + number) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDoStuff(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDoStuff(<any>response_);
-                } catch (e) {
-                    return <Observable<DoStuffResult | null>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<DoStuffResult | null>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDoStuff(response: HttpResponseBase): Observable<DoStuffResult | null> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : <DoStuffResult>JSON.parse(_responseText, this.jsonParseReviver);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<DoStuffResult | null>(<any>null);
-    }
 }
 
-export interface DoStuffResult {
-    result: number;
-    greet?: string | undefined;
-    sampleConfigurationValue?: string | undefined;
-}
 
 export class SwaggerException extends Error {
     message: string;
