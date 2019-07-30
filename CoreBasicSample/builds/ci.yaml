@@ -34,7 +34,7 @@ steps:
     projectName: MyWonderfulApp
     projectVersion: '$(AssemblyVersion)'
 
-- task: DotNetCoreCLI@1
+- task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
   inputs:
     command: restore
@@ -49,30 +49,14 @@ steps:
     configuration: '$(BuildConfiguration)'
     clean: true
 
-- task: DotNetCoreCLI@1
+- task: DotNetCoreCLI@2
   displayName: 'dotnet test'
   inputs:
     command: test
     projects: '$(solution)'
-    arguments: '--logger:trx;LogFileName=$(Common.TestResultsDirectory)\test.trx --no-build --configuration $(BuildConfiguration) '
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
   continueOnError: true
-
-- task: PublishTestResults@1
-  displayName: 'Publish Test Results from dotnet'
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '$(Common.TestResultsDirectory)\**\*.trx '
-
-- task: DotNetCoreCLI@2
-  displayName: .NET Core Publish
-  inputs:
-    command: publish
-    projects: '$(serviceProject)'
-    arguments: '--output $(Build.ArtifactStagingDirectory)\service'
-    configuration: $(BuildConfiguration)
-    workingDirectory: $(serviceProjectDir)
-    publishWebProjects: False
-    zipAfterPublish: true
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
@@ -80,15 +64,3 @@ steps:
 - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
   displayName: 'Publish Quality Gate Result'
   continueOnError: true
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: Service'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)\service'
-    ArtifactName: Service
-    
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: Web config for out-of-process hosting'
-  inputs:
-    PathtoPublish: 'CoreBasicSample/assets/iis/web.config.OutOfProcessSample'
-    ArtifactName: assets
