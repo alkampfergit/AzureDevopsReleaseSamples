@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="SonarQube - MyWonderfulApp Sonar way" Description="This rule set was automatically generated from SonarQube.&#xD;&#xA;https://sonarcloud.io/profiles/show?key=AVxYLDqJFTbgxqUNfO_U" ToolsVersion="16.0">
+<RuleSet Name="SonarQube - MyWonderfulApp Sonar way modified" Description="This rule set was automatically generated from SonarQube.&#xD;&#xA;https://sonarcloud.io/profiles/show?key=AWxEe-SEp3dY7WKJmY-D" ToolsVersion="16.0">
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
     <Rule Id="S100" Action="None" />
     <Rule Id="S1006" Action="Warning" />
@@ -29,7 +29,7 @@
     <Rule Id="S113" Action="None" />
     <Rule Id="S1134" Action="Warning" />
     <Rule Id="S1135" Action="Warning" />
-    <Rule Id="S1144" Action="Warning" />
+    <Rule Id="S1144" Action="None" />
     <Rule Id="S1145" Action="None" />
     <Rule Id="S1147" Action="None" />
     <Rule Id="S1151" Action="None" />
