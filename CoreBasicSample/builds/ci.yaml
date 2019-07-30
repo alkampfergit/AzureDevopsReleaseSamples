@@ -1,0 +1,66 @@
+trigger:
+- master
+- develop
+- feature/*
+- release/*
+- hotfix/*
+
+pool:
+  name: Hosted Windows 2019 with VS2019
+
+variables:
+  solution: 'CoreBasicSample/src/MyWonderfulApp.Service.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 2.2.105'
+  inputs:
+    version: 2.2.105
+
+- task: GitVersion@1
+  displayName: 'GitVersion '
+  inputs:
+    BuildNamePrefix: 'MyWonderfulApp CI'
+
+- task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+  displayName: 'Prepare analysis on SonarCloud'
+  inputs:
+    SonarCloud: 'SonarCloud'
+    organization: 'alkampfergit-github'
+    projectKey: MyWonderfulApp
+    projectName: MyWonderfulApp
+    projectVersion: '$(AssemblyVersion)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '$(solution)'
+
+- task: VSBuild@1
+  displayName: 'Build solution $(solution)'
+  inputs:
+    solution: '$(solution)'
+    vsVersion: "15.0"
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    clean: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '$(solution)'
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
+  continueOnError: true
+
+- task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+  displayName: 'Run Code Analysis'
+
+- task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+  displayName: 'Publish Quality Gate Result'
+  continueOnError: true

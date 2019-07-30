@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SupportClient } from 'src/app/services/myWonderfulAppServices.web';
+import { SupportClient } from 'src/app/services/myWonderfulAppServicesv1.web';
 
 @Component({
   selector: 'app-test-web-api',
@@ -23,7 +23,7 @@ export class TestWebApiComponent implements OnInit {
   }
 
   public callEcho() {
-    this.echo = this.testClient.ping("1.0");
+    this.echo = this.testClient.ping();
   }
 
 }

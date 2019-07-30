@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSwag.AspNetCore;
-using NSwag.SwaggerGeneration.AspNetCore;
 using Serilog;
-using System;
-using System.Linq;
 
 namespace MyWonderfulApp.Service
 {
@@ -19,13 +16,11 @@ namespace MyWonderfulApp.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddVersionedApiExplorer(options =>
-            {
-                options.GroupNameFormat = "'v'VVV";
-                options.SubstituteApiVersionInUrl = true;
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.DefaultApiVersion = new ApiVersion(1, 0);
-            });
+            services
+                .AddMvc(config =>
+                {
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services
                 // .AddMvc(); // Swagger needs full MVC to render the UI
@@ -38,10 +33,27 @@ namespace MyWonderfulApp.Service
                 {
                     o.DefaultApiVersion = new ApiVersion(1, 0); // specify the default api version
                     o.AssumeDefaultVersionWhenUnspecified = true; // assume that the caller wants the default version if they don'
-                    o.ApiVersionReader = new QueryStringApiVersionReader("api-version");
-                });
+                    o.ApiVersionReader = new UrlSegmentApiVersionReader();
+                })
+                .AddMvcCore();
 
-            services.AddSwaggerDocument();
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+
+            services
+               .AddSwaggerDocument(document =>
+               {
+                   document.DocumentName = "v1";
+                   document.ApiGroupNames = new[] { "1" };
+               })
+               .AddSwaggerDocument(document =>
+               {
+                   document.DocumentName = "v2";
+                   document.ApiGroupNames = new[] { "2" };
+               });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,13 +78,7 @@ namespace MyWonderfulApp.Service
 
             // Register the Swagger generator and the Swagger UI middlewares
             app.UseSwagger();
-            app.UseSwaggerUi3(settings =>
-            {
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    settings.SwaggerRoutes.Add(new SwaggerUi3Route(description.GroupName.ToUpperInvariant(), $"/swagger/{description.GroupName}/swagger.json"));
-                }
-            });
+            app.UseSwaggerUi3();
 
             app.UseMvcWithDefaultRoute();
         }

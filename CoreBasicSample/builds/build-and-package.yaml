@@ -1,0 +1,114 @@
+trigger:
+- master
+
+variables:
+  AssemblyVersion: '0.0.1'
+  solution: 'CoreBasicSample/src/MyWonderfulApp.Service.sln'
+  serviceProject: 'CoreBasicSample/src/MyWonderfulApp.Service/MyWonderfulApp.Service.csproj'
+  serviceProjectDir: 'CoreBasicSample/src/MyWonderfulApp.Service'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+jobs:
+- job: "BuildCoreApp"
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  
+  steps:
+
+  - task: DotNetCoreInstaller@0
+    displayName: 'Use .NET Core sdk 2.2.105'
+    inputs:
+      version: 2.2.105
+
+  - task: GitVersion@0
+    displayName: 'GitVersion '
+    inputs:
+      BuildNamePrefix: 'MyWonderfulApp Package'
+
+  - task: DotNetCoreCLI@1
+    displayName: 'dotnet restore'
+    inputs:
+      command: restore
+      projects: '$(solution)'
+
+  - task: VSBuild@1
+    displayName: 'Build solution $(solution)'
+    inputs:
+      solution: '$(solution)'
+      vsVersion: "15.0"
+      platform: '$(BuildPlatform)'
+      configuration: '$(BuildConfiguration)'
+      clean: true
+  
+  - task: DotNetCoreCLI@1
+    displayName: 'dotnet test'
+    inputs:
+      command: test
+      projects: '$(solution)'
+      arguments: '--logger:trx;LogFileName=$(Common.TestResultsDirectory)\test.trx --no-build --configuration $(BuildConfiguration) '
+    continueOnError: true
+  
+  - task: PublishTestResults@1
+    displayName: 'Publish Test Results from dotnet'
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '$(Common.TestResultsDirectory)\**\*.trx '
+
+  - task: DotNetCoreCLI@2
+    displayName: .NET Core Publish
+    inputs:
+      command: publish
+      projects: '$(serviceProject)'
+      arguments: '--output $(Build.ArtifactStagingDirectory)\service'
+      configuration: $(BuildConfiguration)
+      workingDirectory: $(serviceProjectDir)
+      publishWebProjects: False
+      zipAfterPublish: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: Service'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)\service'
+      ArtifactName: Service
+      
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: Web config for out-of-process hosting'
+    inputs:
+      PathtoPublish: 'CoreBasicSample/assets/iis/web.config.OutOfProcessSample'
+      ArtifactName: assets
+
+- job: "BuildAngularApp"
+  variables:
+    uiFolder: CoreBasicSample/src/MyWonderfulApp.Service/UI
+  pool:
+    name: Hosted Ubuntu 1604
+
+  steps:
+  - task: DeleteFiles@1
+    displayName: 'Delete previous node_modules'
+    inputs:
+      SourceFolder: '$(uiFolder)/node_modules'
+      Contents: '**'
+
+  - task: Npm@1
+    displayName: 'npm custom'
+    inputs:
+      command: custom
+      workingDir: $(uiFolder)
+      verbose: false
+      customCommand: ci
+
+  - task: Npm@1
+    displayName: 'npm run prod'
+    inputs:
+      command: custom
+      workingDir: $(uiFolder)
+      verbose: false
+      customCommand: 'run prod'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: AngularUi'
+    inputs:
+      PathtoPublish: '$(uiFolder)/../www'
+      ArtifactName: AngularUi

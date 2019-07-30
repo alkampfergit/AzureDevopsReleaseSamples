@@ -34,7 +34,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TestWebApiComponent", function() { return TestWebApiComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var src_app_services_myWonderfulAppServices_web__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/myWonderfulAppServices.web */ "./src/app/services/myWonderfulAppServices.web.ts");
+/* harmony import */ var src_app_services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/myWonderfulAppServicesv1.web */ "./src/app/services/myWonderfulAppServicesv1.web.ts");
 
 
 
@@ -45,18 +45,18 @@ var TestWebApiComponent = /** @class */ (function () {
     TestWebApiComponent.prototype.ngOnInit = function () {
     };
     TestWebApiComponent.prototype.callEcho = function () {
-        this.echo = this.testClient.ping("1.0");
+        this.echo = this.testClient.ping();
     };
     TestWebApiComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-test-web-api',
             template: __webpack_require__(/*! ./test-web-api.component.html */ "./src/app/tests/test-web-api/test-web-api.component.html"),
             providers: [
-                src_app_services_myWonderfulAppServices_web__WEBPACK_IMPORTED_MODULE_2__["SupportClient"]
+                src_app_services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_2__["SupportClient"]
             ],
             styles: [__webpack_require__(/*! ./test-web-api.component.css */ "./src/app/tests/test-web-api/test-web-api.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_myWonderfulAppServices_web__WEBPACK_IMPORTED_MODULE_2__["SupportClient"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_myWonderfulAppServicesv1_web__WEBPACK_IMPORTED_MODULE_2__["SupportClient"]])
     ], TestWebApiComponent);
     return TestWebApiComponent;
 }());

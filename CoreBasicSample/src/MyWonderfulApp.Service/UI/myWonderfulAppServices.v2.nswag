@@ -4,7 +4,7 @@
   "swaggerGenerator": {
     "fromSwagger": {
       "json": "",
-      "url": "http://localhost:5010/swagger/v1/swagger.json",
+      "url": "http://localhost:12345/swagger/v2/swagger.json",
       "output": null
     }
   },
@@ -60,7 +60,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "src/app/services/myWonderfulAppServices.web.ts"
+      "output": "src/app/services/myWonderfulAppServicesv2.web.ts"
     }
   }
 }
