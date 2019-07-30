@@ -71,7 +71,6 @@ jobs:
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)\service'
       ArtifactName: Service
-
       
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: Web config for out-of-process hosting'
