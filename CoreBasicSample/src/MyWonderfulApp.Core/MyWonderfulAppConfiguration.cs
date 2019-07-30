@@ -29,6 +29,5 @@ namespace MyWonderfulApp.Core
         }
 
         public String SampleConfigurationValue { get; set; }
-
     }
 }

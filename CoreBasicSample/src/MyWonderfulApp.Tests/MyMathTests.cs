@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyWonderfulApp.Data
+namespace MyWonderfulApp.Tests
 {
     public class Class1
     {
