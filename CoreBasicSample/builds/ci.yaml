@@ -18,7 +18,7 @@ steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core sdk 2.2.105'
   inputs:
-    version: 2.2.105
+    version: 2.2.401
 
 - task: GitVersion@1
   displayName: 'GitVersion '
@@ -49,14 +49,11 @@ steps:
     configuration: '$(BuildConfiguration)'
     clean: true
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
+- task: VSTest@2
   inputs:
-    command: test
-    projects: '$(solution)'
-    configuration: '$(BuildConfiguration)'
-    nobuild: true
-  continueOnError: true
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    codeCoverageEnabled: true
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
