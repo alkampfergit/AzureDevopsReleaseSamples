@@ -128,22 +128,22 @@ stages:
               - task: ExtractFiles@1
                 displayName: 'Extract files for base service '
                 inputs:
-                  archiveFilePatterns:  $(System.ArtifactsDirectory)/Service/MyWonderfulApp.Service.zip
-                  destinationFolder: '$(System.ArtifactsDirectory)/FullSite'
+                  archiveFilePatterns:  $(Pipeline.Workspace)/Service/MyWonderfulApp.Service.zip
+                  destinationFolder: '$(Pipeline.Workspace)/FullSite'
 
                 continueOnError: true
 
               - task: ExtractFiles@1
                 displayName: 'Extract files for angular app'
                 inputs:
-                  archiveFilePatterns:  $(System.ArtifactsDirectory)/Service/MyWonderfulApp.Service.zip
-                  destinationFolder: '$(System.ArtifactsDirectory)/FullSite'
+                  archiveFilePatterns:  $(Pipeline.Workspace)/Service/MyWonderfulApp.Service.zip
+                  destinationFolder: '$(Pipeline.Workspace)/FullSite'
 
               - task: CopyFiles@2
                 displayName: 'Copy angular files app'
                 inputs:
-                  SourceFolder: '$(System.ArtifactsDirectory)/AngularUi'
-                  TargetFolder: '$(System.ArtifactsDirectory)/FullSite/UI'
+                  SourceFolder: '$(Pipeline.Workspace)/AngularUi'
+                  TargetFolder: '$(Pipeline.Workspace)/FullSite/UI'
 
                 continueOnError: true
               - task: AzureRmWebAppDeployment@4
@@ -151,6 +151,6 @@ stages:
                 inputs:
                   azureSubscription: 'MyAzureRM'
                   WebAppName: MyWonderfulAppService
-                  Package: '$(System.ArtifactsDirectory)/FullSite'
+                  Package: '$(Pipeline.Workspace)/FullSite'
 
 
