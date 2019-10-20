@@ -143,7 +143,7 @@ stages:
                 displayName: 'Copy angular files app'
                 inputs:
                   SourceFolder: '$(Pipeline.Workspace)/AngularUi'
-                  TargetFolder: '$(Pipeline.Workspace)/FullSite/UI'
+                  TargetFolder: '$(Pipeline.Workspace)/FullSite/www'
 
                 continueOnError: true
               - task: AzureRmWebAppDeployment@4
