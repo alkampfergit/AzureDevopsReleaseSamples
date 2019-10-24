@@ -31,6 +31,7 @@ jobs:
     inputs:
       command: restore
       projects: '$(solution)'
+      verbosityRestore: 'Diagnostic'
 
   - task: VSBuild@1
     displayName: 'Build solution $(solution)'
