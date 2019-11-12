@@ -26,7 +26,7 @@ stages:
         - task: GitVersion@0
           displayName: 'GitVersion '
           inputs:
-            BuildNamePrefix: 'MyWonderfulApp Package'
+            BuildNamePrefix: 'MyWonderfulApp multi stage release'
 
         - task: DotNetCoreCLI@1
           displayName: 'dotnet restore'
