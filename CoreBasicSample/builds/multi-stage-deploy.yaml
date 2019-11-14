@@ -1,5 +1,6 @@
 trigger:
   - master
+pr: none
 
 variables:
   AssemblyVersion: '0.0.1'
