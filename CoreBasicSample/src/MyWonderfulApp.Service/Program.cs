@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MyWonderfulApp.Service
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
