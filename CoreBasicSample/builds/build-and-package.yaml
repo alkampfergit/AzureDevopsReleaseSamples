@@ -39,6 +39,7 @@ jobs:
     inputs:
       scanFolder: $(Build.SourcesDirectory)
       outputFormat: csv
+      verboseOutput: true
 
   - task: VSBuild@1
     displayName: 'Build solution $(solution)'
