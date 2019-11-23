@@ -38,6 +38,7 @@ jobs:
   - task: CredScan@2
     inputs:
       scanFolder: $(Build.SourcesDirectory)
+      outputFormat: csv
 
   - task: VSBuild@1
     displayName: 'Build solution $(solution)'
@@ -84,6 +85,11 @@ jobs:
     inputs:
       PathtoPublish: 'CoreBasicSample/assets/iis/web.config.OutOfProcessSample'
       ArtifactName: assets
+
+  - task: PostAnalysis@1
+    displayName: Security post analysis
+    inputs:
+     CredScan: true
 
 - job: "BuildAngularApp"
   variables:
