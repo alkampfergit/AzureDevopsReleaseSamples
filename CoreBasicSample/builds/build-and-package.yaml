@@ -35,6 +35,10 @@ jobs:
       projects: '$(solution)'
       verbosityRestore: 'Diagnostic'
 
+  - task: CredScan@2
+    inputs:
+      scanFolder: $(Build.SourcesDirectory)
+
   - task: VSBuild@1
     displayName: 'Build solution $(solution)'
     inputs:
