@@ -87,6 +87,13 @@ jobs:
       PathtoPublish: 'CoreBasicSample/assets/iis/web.config.OutOfProcessSample'
       ArtifactName: assets
 
+  - task: PublishSecurityAnalysisLogs@2
+    inputs:
+      ArtifactName: 'CodeAnalysisLogs'
+      ArtifactType: 'Container'
+      AllTools: true
+      ToolLogsNotFoundAction: 'Standard'
+      
   - task: PostAnalysis@1
     displayName: Security post analysis
     inputs:
