@@ -41,6 +41,18 @@ jobs:
       outputFormat: csv
       verboseOutput: true
 
+  - task: AntiMalware@3
+    inputs:
+      InputType: 'Basic'
+      ScanType: 'CustomScan'
+      FileDirPath: '$(Build.StagingDirectory)'
+      BootSectorScan: true
+      EnableServices: true
+      SupportLogOnError: true
+      TreatSignatureUpdateFailureAs: 'Warning'
+      SignatureFreshness: 'UpToDate'
+      TreatStaleSignatureAs: 'Error'
+
   - task: VSBuild@1
     displayName: 'Build solution $(solution)'
     inputs:
@@ -98,6 +110,8 @@ jobs:
     displayName: Security post analysis
     inputs:
      CredScan: true
+     AllTools: true
+
 
 - job: "BuildAngularApp"
   variables:
