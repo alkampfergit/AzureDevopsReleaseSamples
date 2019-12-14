@@ -6,5 +6,5 @@
   },
   "AllowedHosts": "*",
   "SampleConfigurationValue" :  "dev-value-in-source-code",
-  "ConnectionString" : "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=S3cur3Password167##;"
+  "ConnectionString" : "fake"
 }
