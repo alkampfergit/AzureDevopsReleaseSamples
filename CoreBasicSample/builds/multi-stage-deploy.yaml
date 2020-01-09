@@ -24,7 +24,7 @@ stages:
           inputs:
             version: 2.2.105
 
-        - task: GitVersion@0
+        - task: GitVersion@1
           displayName: 'GitVersion '
           inputs:
             BuildNamePrefix: 'MyWonderfulApp multi stage release'
