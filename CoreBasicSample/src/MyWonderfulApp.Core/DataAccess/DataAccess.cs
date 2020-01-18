@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ArasImport.Common.Sql
@@ -17,8 +16,8 @@ namespace ArasImport.Common.Sql
         /// </summary>
         internal class ConnectionData : IDisposable
         {
-            public DbProviderFactory Factory { get; set; }
             public string ConnectionString { get; set; }
+
             private bool IsWeakReference { get; set; }
 
             private bool IsCommittedOrRolledBack = false;
@@ -50,23 +49,22 @@ namespace ArasImport.Common.Sql
                 }
             }
 
-            internal static ConnectionData CreateConnectionData(DbProviderFactory factory, string connectionString)
+            internal static ConnectionData CreateConnectionData(string connectionString)
             {
-                return new ConnectionData(factory, connectionString, false);
+                return new ConnectionData(connectionString, false);
             }
 
             internal static ConnectionData CreateWeakConnectionData(ConnectionData data)
             {
-                var conn = new ConnectionData(data.Factory, data.ConnectionString, true);
+                var conn = new ConnectionData(data.ConnectionString, true);
                 conn._connection = data._connection;
                 conn._transaction = data._transaction;
                 conn.IsEnlistedInNhibernateTransaction = data.IsEnlistedInNhibernateTransaction;
                 return conn;
             }
 
-            private ConnectionData(DbProviderFactory factory, string connectionString, bool isWeakReference)
+            private ConnectionData(string connectionString, bool isWeakReference)
             {
-                Factory = factory;
                 ConnectionString = connectionString;
                 IsWeakReference = isWeakReference;
             }
@@ -123,7 +121,7 @@ namespace ArasImport.Common.Sql
                     return;
                 }
 
-                _connection = Factory.CreateConnection();
+                _connection = new SqlConnection();
                 _connection.ConnectionString = ConnectionString;
                 _connection.Open();
                 _transaction = _connection.BeginTransaction();
@@ -136,87 +134,15 @@ namespace ArasImport.Common.Sql
 
         #region Static Initialization
 
-        static DataAccess()
-        {
-            _parametersFormat = new Dictionary<Type, string>();
-            _parametersFormat.Add(typeof(SqlCommand), "@{0}");
-            parameterFormatByProviderName = new Dictionary<string, string>();
-            parameterFormatByProviderName.Add("System.Data.SqlClient", "@{0}");
-            parameterFormatByProviderName.Add("Oracle.ManagedDataAccess.Client", ":{0}");
-        }
-
         /// <summary>
         /// Set connection string before using the class if you want to use a default
         /// connection string.
         /// </summary>
         public static String ConnectionString { get; private set; }
 
-        public static String ProviderName { get; private set; }
-
-        public static void SetConnectionString(string connectionString, string providerName)
+        public static void SetConnectionString(string connectionString)
         {
             ConnectionString = connectionString;
-            ProviderName = providerName;
-        }
-
-        public static void SetSqlServerConnectionString(string connectionString)
-        {
-            SetConnectionString(connectionString, "System.Data.SqlClient");
-        }
-
-        #endregion
-
-        #region Handling of connection
-
-        /// <summary>
-        /// To know at runtime the format of the parameter we need to check the 
-        /// <see cref="DbConnection.GetSchema(string)"/> method. 
-        /// To cache the format we use a dictionary with command type as a key and
-        /// string format as value.
-        /// </summary>
-        private readonly static Dictionary<Type, string> _parametersFormat;
-
-        /// <summary>
-        /// In realtà oltre al tipo di comando io vorrei anche memorizzare il tipo di parametro
-        /// usando il provider name, tipo se è System.Data.SqlClient allora è @{0}.
-        /// </summary>
-        private readonly static Dictionary<string, string> parameterFormatByProviderName;
-
-        /// <summary>
-        /// Gets the format of the parameter, to avoid query the schema the parameter
-        /// format is cached with the type of the parameter
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        private static string GetParameterFormat(DbCommand command)
-        {
-            if (!_parametersFormat.ContainsKey(command.GetType()))
-            {
-                lock (_parametersFormat)
-                {
-                    if (parameterFormatByProviderName.ContainsKey(ProviderName))
-                    {
-                        _parametersFormat.Add(
-                           command.GetType(),
-                           parameterFormatByProviderName[ProviderName]);
-                    }
-                    else
-                    {
-                        //Debbo interrogare il provider name
-                        DbProviderFactory Factory = DbProviderFactories.GetFactory(ProviderName);
-                        using (DbConnection conn = Factory.CreateConnection())
-                        {
-                            conn.ConnectionString = ConnectionString;
-                            conn.Open();
-                            _parametersFormat.Add(
-                                command.GetType(),
-                                conn.GetSchema("DataSourceInformation")
-                                    .Rows[0]["ParameterMarkerFormat"].ToString());
-                        }
-                    }
-                }
-            }
-            return _parametersFormat[command.GetType()];
         }
 
         #endregion
@@ -225,8 +151,7 @@ namespace ArasImport.Common.Sql
 
         private static ConnectionData CreateConnection()
         {
-            DbProviderFactory factory = DbProviderFactories.GetFactory(ProviderName);
-            return ConnectionData.CreateConnectionData(factory, ConnectionString);
+            return ConnectionData.CreateConnectionData(ConnectionString);
         }
 
         /// <summary>
@@ -340,20 +265,19 @@ namespace ArasImport.Common.Sql
         /// </summary>
         /// <param name="functionToExecute">The delegates that really executes the command.</param>
         /// <param name="connection"></param>
-        public static void Execute(Action<DbCommand, DbProviderFactory> functionToExecute)
+        public static void Execute(Action<DbCommand> functionToExecute)
         {
-            DbProviderFactory factory = GetFactory();
             using (ConnectionData connectionData = CreateConnection())
             {
                 DbCommand command = null;
                 try
                 {
-                    using (command = factory.CreateCommand())
+                    using (command = new SqlCommand())
                     {
                         command.CommandTimeout = 120;
                         command.CommandType = CommandType.Text;
                         connectionData.EnlistCommand(command);
-                        functionToExecute(command, factory);
+                        functionToExecute(command);
                     }
                     connectionData.Commit();
                 }
@@ -364,11 +288,6 @@ namespace ArasImport.Common.Sql
                     throw;
                 }
             }
-        }
-
-        internal static DbProviderFactory GetFactory()
-        {
-            return DbProviderFactories.GetFactory(ProviderName);
         }
 
         #endregion
@@ -386,12 +305,12 @@ namespace ArasImport.Common.Sql
         /// <param name="functionToExecute">The function that prepares the command that should
         /// be executed with execute scalar.</param>
         /// <returns></returns>
-        public static T ExecuteScalar<T>(Action<DbCommand, DbProviderFactory> functionToExecute)
+        public static T ExecuteScalar<T>(Action<DbCommand> functionToExecute)
         {
             T result = default;
-            Execute((command, factory) =>
+            Execute((command) =>
             {
-                functionToExecute(command, factory);
+                functionToExecute(command);
                 object o = command.ExecuteScalar();
                 //result = (T)o; //execute scalar mi ritorna un decimal...che non posso castare
                 result = (T)Convert.ChangeType(o, typeof(T));
@@ -399,12 +318,12 @@ namespace ArasImport.Common.Sql
             return result;
         }
 
-        public static List<T> ExecuteGetEntity<T>(Action<DbCommand, DbProviderFactory> functionToExecute, Func<IDataRecord, T> select)
+        public static List<T> ExecuteGetEntity<T>(Action<DbCommand> functionToExecute, Func<IDataRecord, T> select)
         {
             List<T> retvalue = new List<T>();
-            Execute((c, f) =>
+            Execute((c) =>
             {
-                functionToExecute(c, f);
+                functionToExecute(c);
                 using (IDataReader dr = c.ExecuteReader())
                 {
                     while (dr.Read())
@@ -420,12 +339,12 @@ namespace ArasImport.Common.Sql
         /// Execute a command with no result.
         /// </summary>
         /// <param name="functionToExecute"></param>
-        public static int ExecuteNonQuery(Action<DbCommand, DbProviderFactory> functionToExecute)
+        public static int ExecuteNonQuery(Action<DbCommand> functionToExecute)
         {
             int result = -1;
-            Execute((command, factory) =>
+            Execute((command) =>
             {
-                functionToExecute(command, factory);
+                functionToExecute(command);
                 result = command.ExecuteNonQuery();
             });
             return result;
@@ -439,16 +358,16 @@ namespace ArasImport.Common.Sql
         /// the command to configure, a factory to create parameters, and finally another
         /// delegate of a function that returns the datareader.</param>
         public static void ExecuteReader(
-            Action<DbCommand, DbProviderFactory, Func<IDataReader>> commandPrepareFunction)
+            Action<DbCommand, Func<IDataReader>> commandPrepareFunction)
         {
-            Execute((command, factory) =>
+            Execute((command) =>
             {
                 //The code to execute only assures that the eventually created datareader would be
                 //closed in a finally block.
                 IDataReader dr = null;
                 try
                 {
-                    commandPrepareFunction(command, factory,
+                    commandPrepareFunction(command,
                         () =>
                         {
                             dr = command.ExecuteReader();
@@ -464,13 +383,13 @@ namespace ArasImport.Common.Sql
 
         public static void FillDataset(
             DataTable table,
-            Action<DbCommand, DbProviderFactory> commandPrepareFunction)
+            Action<DbCommand> commandPrepareFunction)
         {
             Execute(
-                (command, factory) =>
+                (command) =>
                 {
-                    commandPrepareFunction(command, factory);
-                    using (DbDataAdapter da = factory.CreateDataAdapter())
+                    commandPrepareFunction(command);
+                    using (DbDataAdapter da = new SqlDataAdapter())
                     {
                         da.SelectCommand = command;
                         da.Fill(table);
@@ -480,19 +399,19 @@ namespace ArasImport.Common.Sql
 
         public static void ExecuteDataset<T>(
             string tableName,
-            Action<DbCommand, DbProviderFactory, Func<T>> commandPrepareFunction)
+            Action<DbCommand, Func<T>> commandPrepareFunction)
             where T : DataSet, new()
         {
-            Execute((command, factory) =>
+            Execute((command) =>
             {
                 //The code to execute only assures that the eventually created datareader would be
                 //closed in a finally block.
                 using (T ds = new T())
                 {
-                    commandPrepareFunction(command, factory,
+                    commandPrepareFunction(command,
                         () =>
                         {
-                            using (DbDataAdapter da = factory.CreateDataAdapter())
+                            using (DbDataAdapter da = new SqlDataAdapter())
                             {
                                 da.SelectCommand = command;
                                 da.Fill(ds, tableName);
@@ -509,18 +428,18 @@ namespace ArasImport.Common.Sql
         /// </summary>
         /// <param name="commandPrepareFunction"></param>
         public static void ExecuteDataset(
-            Action<DbCommand, DbProviderFactory, Func<DataSet>> commandPrepareFunction)
+            Action<DbCommand, Func<DataSet>> commandPrepareFunction)
         {
-            Execute((command, factory) =>
+            Execute((command) =>
             {
                 //The code to execute only assures that the eventually created datareader would be
                 //closed in a finally block.
                 using (DataSet ds = new DataSet())
                 {
-                    commandPrepareFunction(command, factory,
+                    commandPrepareFunction(command,
                         () =>
                         {
-                            using (DbDataAdapter da = factory.CreateDataAdapter())
+                            using (DbDataAdapter da = new SqlDataAdapter())
                             {
                                 da.SelectCommand = command;
                                 da.Fill(ds);
@@ -560,7 +479,7 @@ namespace ArasImport.Common.Sql
 
         public static string GetParameterName(DbCommand command, string parameterName)
         {
-            return string.Format(GetParameterFormat(command), parameterName);
+            return string.Format("@{0}", parameterName);
         }
 
         #endregion
@@ -569,7 +488,7 @@ namespace ArasImport.Common.Sql
 
         public static SqlQuery CreateQuery(string s)
         {
-            return new SqlQuery(s, CommandType.Text, GetFactory());
+            return new SqlQuery(s, CommandType.Text);
         }
 
         #endregion

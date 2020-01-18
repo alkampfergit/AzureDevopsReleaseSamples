@@ -1,10 +1,9 @@
-﻿using Serilog;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.IO;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,8 +15,6 @@ namespace ArasImport.Common.Sql
         #region Properties and constructor
 
         internal DbCommand Command { get; set; }
-
-        internal DbProviderFactory Factory { get; set; }
 
         private Dictionary<string, OutputParameter> outputParameters;
 
@@ -33,10 +30,9 @@ namespace ArasImport.Common.Sql
 
         internal StringBuilder query = new StringBuilder();
 
-        internal SqlQuery(string query, CommandType cmdType, DbProviderFactory factory)
+        internal SqlQuery(string query, CommandType cmdType)
         {
-            Factory = factory;
-            Command = Factory.CreateCommand();
+            Command = new SqlCommand();
             Command.CommandType = cmdType;
             Command.CommandTimeout = 1200;
             this.query.Append(query);
@@ -284,7 +280,7 @@ namespace ArasImport.Common.Sql
         {
             DataAccess.Execute(this, () =>
             {
-                using (DbDataAdapter da = Factory.CreateDataAdapter())
+                using (DbDataAdapter da = new SqlDataAdapter())
                 {
                     da.SelectCommand = Command;
                     da.Fill(dt);
@@ -296,7 +292,7 @@ namespace ArasImport.Common.Sql
         {
             DataAccess.Execute(this, () =>
             {
-                using (DbDataAdapter da = Factory.CreateDataAdapter())
+                using (DbDataAdapter da = new SqlDataAdapter())
                 {
                     da.SelectCommand = Command;
                     da.Fill(ds, tableName);
@@ -410,7 +406,7 @@ namespace ArasImport.Common.Sql
                 query.Replace("{" + commandName + "}", paramName);
             }
 
-            DbParameter param = Factory.CreateParameter();
+            DbParameter param = new SqlParameter();
             if (type != null)
             {
                 param.DbType = type.Value;
@@ -430,7 +426,7 @@ namespace ArasImport.Common.Sql
                 query.Replace("{" + commandName + "}", paramName);
             }
 
-            DbParameter param = Factory.CreateParameter();
+            DbParameter param = new SqlParameter();
             param.DbType = type;
             param.ParameterName = paramName;
             param.Direction = ParameterDirection.Output;

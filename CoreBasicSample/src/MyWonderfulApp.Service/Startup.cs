@@ -25,7 +25,7 @@ namespace MyWonderfulApp.Service
             services
                 // .AddMvc(); // Swagger needs full MVC to render the UI
                 .AddMvcCore()
-                //.AddJsonFormatters()
+                .AddJsonFormatters()
                 .AddApiExplorer();
 
             services
