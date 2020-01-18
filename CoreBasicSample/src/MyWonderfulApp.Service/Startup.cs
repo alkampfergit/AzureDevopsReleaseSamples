@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyWonderfulApp.Core;
 using NSwag.AspNetCore;
 using Serilog;
 
@@ -16,6 +17,8 @@ namespace MyWonderfulApp.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            MyWonderfulAppConfiguration.Init();
+
             services
                 .AddMvc(config =>
                 {

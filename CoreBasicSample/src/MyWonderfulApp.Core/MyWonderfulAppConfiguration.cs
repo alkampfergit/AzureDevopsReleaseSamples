@@ -26,8 +26,17 @@ namespace MyWonderfulApp.Core
             IConfiguration configuration = configurationBuilder.Build();
             Instance = new MyWonderfulAppConfiguration();
             configuration.Bind(Instance);
+
+            DataAccess.DataAccess.SetConnectionString(Instance.ConnectionString);
+        }
+
+        public static void Init()
+        {
+            //perform initialization stuff.
         }
 
         public String SampleConfigurationValue { get; set; }
+
+        public String ConnectionString { get; set; }
     }
 }
