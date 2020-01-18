@@ -197,7 +197,7 @@ namespace MyWonderfulApp.Core.DataAccess
             return retvalue;
         }
 
-        public T ExecuteBuildSingleEntity<T>(Func<IDataReader, T> entityBuilder) where T : class
+        public T ExecuteBuildSingleEntity<T>(Func<IDataRecord, T> entityBuilder) where T : class
         {
             T retvalue = null;
             DataAccess.Execute(this, () =>

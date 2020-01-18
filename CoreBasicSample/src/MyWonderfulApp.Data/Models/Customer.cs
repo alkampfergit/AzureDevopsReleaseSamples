@@ -16,7 +16,7 @@ namespace MyWonderfulApp.Data.Models
 
         public String ContactTitle { get; set; }
 
-        public static Customer Builder(IDataReader arg)
+        public static Customer Builder(IDataRecord arg)
         {
             return new Customer()
             {

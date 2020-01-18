@@ -17,7 +17,7 @@ namespace MyWonderfulApp.Data.Models
 
         public Boolean Discontinued { get; set; }
 
-        public static Product Builder(IDataReader arg)
+        public static Product Builder(IDataRecord arg)
         {
             return new Product()
             {

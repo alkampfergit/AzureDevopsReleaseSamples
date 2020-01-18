@@ -3,6 +3,7 @@ using MyWonderfulApp.Core.DataAccess;
 using MyWonderfulApp.Data.Models;
 using NSwag.Annotations;
 using System;
+using System.Collections.Generic;
 
 namespace MyWonderfulApp.Service.Controllers.V1
 {
@@ -50,6 +51,16 @@ namespace MyWonderfulApp.Service.Controllers.V1
             var query = DataAccess.CreateQuery($"Select * from dbo.Customers where CustomerId = '{customerId.Id}'");
             var customer = query.ExecuteBuildSingleEntity<Customer>(Customer.Builder);
             return Ok(customer);
+        }
+
+        [SwaggerResponse(typeof(IEnumerable<Product>))]
+        [HttpGet]
+        [MapToApiVersion("1.0")]
+        public IActionResult SearchProducts(String searchString)
+        {
+            var query = DataAccess.CreateQuery($"Select * from dbo.Products where productName like '%{searchString}%'");
+            var products = query.ExecuteBuildEntities<Product>(Product.Builder);
+            return Ok(products);
         }
     }
 }
