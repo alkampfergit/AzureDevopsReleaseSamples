@@ -43,9 +43,9 @@ namespace MyWonderfulApp.Service.Controllers.V1
         //} 
         
         [SwaggerResponse(typeof(Customer))]
-        [HttpPost]
+        [HttpGet]
         [MapToApiVersion("1.0")]
-        public IActionResult GetCustomer(CustomerIdClass customerId)
+        public IActionResult GetCustomer([FromQuery()] CustomerIdClass customerId)
         {
             var query = DataAccess.CreateQuery($"Select * from dbo.Customers where CustomerId = '{customerId.Id}'");
             var customer = query.ExecuteBuildSingleEntity<Customer>(Customer.Builder);

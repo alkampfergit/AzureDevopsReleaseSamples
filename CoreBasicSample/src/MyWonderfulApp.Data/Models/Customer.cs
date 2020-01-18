@@ -28,56 +28,63 @@ namespace MyWonderfulApp.Data.Models
         }
     }
 
-[JsonConverter(typeof(CustomerIdClassConverter))]
-public class CustomerIdClass
-{
-    public CustomerIdClass(String customerId)
+    [JsonConverter(typeof(CustomerIdClassConverter))]
+    public class CustomerIdClass
     {
-        if (customerId.Length != 5)
-            throw new ArgumentException("Invalid Id", nameof(customerId));
+        private String _id;
 
-        if (customerId.Any(c => !Char.IsLetter(c)))
-            throw new ArgumentException("Invalid Id", nameof(customerId));
-
-        Id = customerId;
-    }
-
-    public String Id { get; private set; }
-}
-
-public class CustomerIdClassConverter : JsonConverter
-{
-    public override bool CanConvert(Type objectType)
-    {
-        if (objectType == typeof(CustomerIdClass))
-            return true;
-
-        return false;
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        if (reader.Read()) 
+        public CustomerIdClass()
         {
-            if (reader.TokenType == JsonToken.PropertyName && "id".Equals(reader.Value as string, StringComparison.OrdinalIgnoreCase)) 
-            {
-                reader.Read();
-                return new CustomerIdClass(reader.Value as string);
+        }
+
+        public CustomerIdClass(String customerId)
+        {
+            Id = customerId;
+        }
+
+        public String Id
+        {
+            get { return _id; }
+            set {
+                if (value.Length != 5)
+                    throw new ArgumentException("Invalid Id");
+
+                if (value.Any(c => !Char.IsLetter(c)))
+                    throw new ArgumentException("Invalid Id");
+
+                _id = value;
             }
         }
-        throw new ArgumentException("Value is not a valid id");
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public class CustomerIdClassConverter : JsonConverter
     {
-        if (value is CustomerIdClass customerId) 
+        public override bool CanConvert(Type objectType)
         {
-            var o = new JObject();
-            o["id"] = customerId.Id;
-            o.WriteTo(writer);
-            return;
+            if (objectType == typeof(CustomerIdClass))
+                return true;
+
+            return false;
         }
-        throw new ArgumentException("Value is not a valid id");
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.Value is String id)
+            {
+                return new CustomerIdClass(id);
+            }
+            throw new ArgumentException("Value is not a valid id");
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value is CustomerIdClass customerId)
+            {
+                var o = JToken.FromObject(customerId.Id);
+                o.WriteTo(writer);
+                return;
+            }
+            throw new ArgumentException("Value is not a valid id");
+        }
     }
-}
 }
