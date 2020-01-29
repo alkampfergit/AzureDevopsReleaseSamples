@@ -8,7 +8,7 @@ namespace MyWonderfulApp.Data.Models
 {
     public class Customer
     {
-        public CustomerIdClass CustomerId { get; set; }
+        public CustomerId CustomerId { get; set; }
 
         public String CompanyName { get; set; }
 
@@ -20,7 +20,7 @@ namespace MyWonderfulApp.Data.Models
         {
             return new Customer()
             {
-                CustomerId = new CustomerIdClass(arg["CustomerID"] as String),
+                CustomerId = new CustomerId(arg["CustomerID"] as String),
                 CompanyName = arg["CompanyName"] as String,
                 ContactName = arg["ContactName"] as String,
                 ContactTitle = arg["ContactTitle"] as String,
@@ -29,31 +29,20 @@ namespace MyWonderfulApp.Data.Models
     }
 
     [JsonConverter(typeof(CustomerIdClassConverter))]
-    public class CustomerIdClass
+    public class CustomerId
     {
         private String _id;
+        public String Id => _id;
 
-        public CustomerIdClass()
+        public CustomerId(String customerId)
         {
-        }
+            if (customerId.Length != 5)
+                throw new ArgumentException("Invalid Id");
 
-        public CustomerIdClass(String customerId)
-        {
-            Id = customerId;
-        }
+            if (customerId.Any(c => !Char.IsLetter(c)))
+                throw new ArgumentException("Invalid Id");
 
-        public String Id
-        {
-            get { return _id; }
-            set {
-                if (value.Length != 5)
-                    throw new ArgumentException("Invalid Id");
-
-                if (value.Any(c => !Char.IsLetter(c)))
-                    throw new ArgumentException("Invalid Id");
-
-                _id = value;
-            }
+            _id = customerId;
         }
     }
 
@@ -61,7 +50,7 @@ namespace MyWonderfulApp.Data.Models
     {
         public override bool CanConvert(Type objectType)
         {
-            if (objectType == typeof(CustomerIdClass))
+            if (objectType == typeof(CustomerId))
                 return true;
 
             return false;
@@ -71,14 +60,22 @@ namespace MyWonderfulApp.Data.Models
         {
             if (reader.Value is String id)
             {
-                return new CustomerIdClass(id);
+                return new CustomerId(id);
             }
+            reader.Read();
+            if ("id".Equals(reader.Value as String, StringComparison.OrdinalIgnoreCase))
+            {
+                //we have an id property, just read it
+                reader.Read();
+                return new CustomerId(reader.Value as String);
+            }
+
             throw new ArgumentException("Value is not a valid id");
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (value is CustomerIdClass customerId)
+            if (value is CustomerId customerId)
             {
                 var o = JToken.FromObject(customerId.Id);
                 o.WriteTo(writer);

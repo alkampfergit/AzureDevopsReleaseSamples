@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyWonderfulApp.Core.DataAccess;
 using MyWonderfulApp.Data.Models;
+using MyWonderfulApp.Service.Models.V1;
 using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
@@ -44,11 +45,21 @@ namespace MyWonderfulApp.Service.Controllers.V1
         //} 
         
         [SwaggerResponse(typeof(Customer))]
-        [HttpGet]
+        [HttpPost]
         [MapToApiVersion("1.0")]
-        public IActionResult GetCustomer([FromQuery()] CustomerIdClass customerId)
+        public IActionResult GetCustomer(CustomerId customerId)
         {
             var query = DataAccess.CreateQuery($"Select * from dbo.Customers where CustomerId = '{customerId.Id}'");
+            var customer = query.ExecuteBuildSingleEntity<Customer>(Customer.Builder);
+            return Ok(customer);
+        }
+
+        [SwaggerResponse(typeof(Customer))]
+        [HttpPost]
+        [MapToApiVersion("1.0")]
+        public IActionResult GetCustomer2(GetCustomer2Dto dto)
+        {
+            var query = DataAccess.CreateQuery($"Select * from dbo.Customers where CustomerId = '{dto.CustomerId.Id}'");
             var customer = query.ExecuteBuildSingleEntity<Customer>(Customer.Builder);
             return Ok(customer);
         }

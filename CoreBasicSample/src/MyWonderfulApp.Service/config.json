@@ -6,5 +6,5 @@
   },
   "AllowedHosts": "*",
   "SampleConfigurationValue": "dev-value-in-source-code",
-  "ConnectionString": "Server=.\\sql2016;Database=northwind;Trusted_Connection=True;"
+  "ConnectionString": "Server=.;Database=northwind;Trusted_Connection=True;"
 }
