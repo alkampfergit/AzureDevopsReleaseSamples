@@ -14,6 +14,11 @@ namespace MyWonderfulApp.Core.DataAccess
     {
         #region Properties and constructor
 
+        /// <summary>
+        /// Used to override standard and default connection string.
+        /// </summary>
+        public String Connection { get; set; }
+
         internal DbCommand Command { get; set; }
 
         private Dictionary<string, OutputParameter> outputParameters;

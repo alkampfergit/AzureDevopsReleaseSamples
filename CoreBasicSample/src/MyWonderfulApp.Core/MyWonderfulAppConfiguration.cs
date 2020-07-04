@@ -38,5 +38,10 @@ namespace MyWonderfulApp.Core
         public String SampleConfigurationValue { get; set; }
 
         public String ConnectionString { get; set; }
+
+        /// <summary>
+        /// Connection string for readonly access.
+        /// </summary>
+        public String ReadonlyConnectionString { get; set; }
     }
 }

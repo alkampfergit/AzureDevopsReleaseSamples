@@ -72,7 +72,11 @@ namespace MyWonderfulApp.Core.DataAccess
             internal void Commit()
             {
 
-                if (IsWeakReference) return;
+                if (IsWeakReference)
+                {
+                    return;
+                }
+
                 IsCommittedOrRolledBack = true;
                 if (!IsEnlistedInNhibernateTransaction && _transaction != null)
                 {
@@ -82,7 +86,11 @@ namespace MyWonderfulApp.Core.DataAccess
 
             internal void Rollback()
             {
-                if (IsWeakReference) return;
+                if (IsWeakReference)
+                {
+                    return;
+                }
+
                 IsCommittedOrRolledBack = true;
                 if (!IsEnlistedInNhibernateTransaction && _transaction != null)
                 {
@@ -92,7 +100,10 @@ namespace MyWonderfulApp.Core.DataAccess
 
             public void Dispose()
             {
-                if (IsWeakReference || IsEnlistedInNhibernateTransaction) return;
+                if (IsWeakReference || IsEnlistedInNhibernateTransaction)
+                {
+                    return;
+                }
 
                 using (Connection)
                 using (Transaction)
@@ -149,9 +160,9 @@ namespace MyWonderfulApp.Core.DataAccess
 
         #region Execution core
 
-        private static ConnectionData CreateConnection()
+        private static ConnectionData CreateConnection(string connection)
         {
-            return ConnectionData.CreateConnectionData(ConnectionString);
+            return ConnectionData.CreateConnectionData(connection ?? ConnectionString);
         }
 
         /// <summary>
@@ -167,7 +178,7 @@ namespace MyWonderfulApp.Core.DataAccess
             Action executionCore,
             bool logException = true)
         {
-            using (ConnectionData connectionData = CreateConnection())
+            using (ConnectionData connectionData = CreateConnection(q.Connection))
             {
                 try
                 {
@@ -211,7 +222,10 @@ namespace MyWonderfulApp.Core.DataAccess
 
         public static string DumpCommand(DbCommand command)
         {
-            if (command == null) return string.Empty;
+            if (command == null)
+            {
+                return string.Empty;
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Data Access Dumper:");
@@ -230,7 +244,10 @@ namespace MyWonderfulApp.Core.DataAccess
                         sb.AppendFormat("{0}={1}, ", parameter.ParameterName, GetValueFromParameter(parameter));
                     }
                 }
-                if (command.Parameters.Count > 0) sb.Length -= 2;
+                if (command.Parameters.Count > 0)
+                {
+                    sb.Length -= 2;
+                }
             }
             else
             {
@@ -267,7 +284,7 @@ namespace MyWonderfulApp.Core.DataAccess
         /// <param name="connection"></param>
         public static void Execute(Action<DbCommand> functionToExecute)
         {
-            using (ConnectionData connectionData = CreateConnection())
+            using (ConnectionData connectionData = CreateConnection(null))
             {
                 DbCommand command = null;
                 try
@@ -489,6 +506,18 @@ namespace MyWonderfulApp.Core.DataAccess
         public static SqlQuery CreateQuery(string s)
         {
             return new SqlQuery(s, CommandType.Text);
+        }
+
+        /// <summary>
+        /// Access database with a special readonly user.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static SqlQuery CreateReadonlyQuery(string s)
+        {
+            var query = new SqlQuery(s, CommandType.Text);
+            query.Connection = MyWonderfulAppConfiguration.Instance.ReadonlyConnectionString;
+            return query;
         }
 
         #endregion

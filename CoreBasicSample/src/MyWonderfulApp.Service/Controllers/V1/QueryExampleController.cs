@@ -14,15 +14,15 @@ namespace MyWonderfulApp.Service.Controllers.V1
     [SwaggerTag("QueryExampleController", Description = "Version 1")]
     public class QueryExampleController : Controller
     {
-        //[SwaggerResponse(typeof(Product))]
-        //[HttpGet]
-        //[MapToApiVersion("1.0")]
-        //public IActionResult GetProduct(String productId)
-        //{
-        //    var query = DataAccess.CreateQuery($"Select * from dbo.Products where productId = {productId}");
-        //    var product = query.ExecuteBuildSingleEntity<Product>(Product.Builder);
-        //    return Ok(product);
-        //}
+        [SwaggerResponse(typeof(Product))]
+        [HttpGet]
+        [MapToApiVersion("1.0")]
+        public IActionResult GetProductVulnerable(String productId)
+        {
+            var query = DataAccess.CreateReadonlyQuery($"Select * from dbo.Products where productId = {productId}");
+            var product = query.ExecuteBuildSingleEntity<Product>(Product.Builder);
+            return Ok(product);
+        }
 
         [SwaggerResponse(typeof(Product))]
         [HttpGet]
