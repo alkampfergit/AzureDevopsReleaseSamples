@@ -1,7 +1,9 @@
 trigger:
-  - master
+  branches:
+    include:
+      - master
 
-pr: none 
+pr: none
 
 variables:
   AssemblyVersion: '0.0.1'
@@ -14,7 +16,7 @@ variables:
 jobs:
 - job: "BuildCoreApp"
   pool:
-    name: Hosted Windows 2019 with VS2019
+    vmImage: 'windows-latest'
   
   steps:
 
@@ -117,7 +119,7 @@ jobs:
   variables:
     uiFolder: CoreBasicSample/src/MyWonderfulApp.Service/UI
   pool:
-    name: Hosted Ubuntu 1604
+    vmImage: 'ubuntu-latest'
 
   steps:
   - task: DeleteFiles@1

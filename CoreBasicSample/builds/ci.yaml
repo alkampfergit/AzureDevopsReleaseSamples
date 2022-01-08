@@ -1,12 +1,17 @@
 trigger:
-- master
-- develop
-- feature/*
-- release/*
-- hotfix/*
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+      - release/*
+      - hotfix/*
+
+pr: none 
 
 pool:
-  name: Hosted Windows 2019 with VS2019
+  pool:
+  vmImage: 'windows-latest'
 
 variables:
   solution: 'CoreBasicSample/src/MyWonderfulApp.Service.sln'
