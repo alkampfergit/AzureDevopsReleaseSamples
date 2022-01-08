@@ -1,6 +1,9 @@
 trigger:
-  - master
-pr: none
+  branches:
+    include:
+      - master
+
+pr: none 
 
 variables:
   AssemblyVersion: '0.0.1'
@@ -15,14 +18,14 @@ stages:
     jobs:
       - job: "BuildCoreApp"
         pool:
-          name: Hosted Windows 2019 with VS2019
+          vmImage: 'windows-latest'
         
         steps:
 
-        - task: DotNetCoreInstaller@0
-          displayName: 'Use .NET Core sdk 2.2.105'
+        - task: UseDotNet@2
+          displayName: 'Use .NET Core sdk 2.x'
           inputs:
-            version: 2.2.105
+            version: 2.x
 
         - task: GitVersion@1
           displayName: 'GitVersion '
@@ -120,7 +123,8 @@ stages:
     dependsOn: build_test
     jobs:
       - deployment: "Release_base_site"
-        pool: "Hosted Vs2017"
+        pool:
+          vmImage: 'windows-latest'
         environment: "single_env"
         strategy:
           runOnce:
